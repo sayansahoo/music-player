@@ -1,17 +1,13 @@
 import React, { Component } from "react";
 import Audio from "./Audio";
 import Menu from "./Menu";
-import { Card, List, Avatar, Progress, Modal, Popover } from "antd";
+import { Card, List, Avatar, Progress, Input, Popover } from "antd";
 import Details from "./Details";
 import styled from "styled-components";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  Redirect,
-} from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 
+const { Search } = Input;
 const StyledTopContainer = styled.div``;
 
 class Music extends Component {
@@ -96,7 +92,13 @@ class Music extends Component {
     e.stopPropagation();
     let idx = this.music.findIndex((a) => a.title === currentSong);
     this.music[idx].likedByMe = !this.state.isLiked;
-    this.setState({ isLiked: this.music[idx].likedByMe });
+    this.music[idx].likes = this.music[idx].likedByMe
+      ? this.music[idx].likes + 1
+      : this.music[idx].likes - 1;
+    this.setState({
+      isLiked: this.music[idx].likedByMe,
+      likes: this.music[idx].likes,
+    });
   };
 
   showComponent = (e) => {
@@ -104,19 +106,35 @@ class Music extends Component {
     this.setState({ minimize: !this.state.minimize });
   };
 
-  playNext = (currentSong) => {
+  playNext = (e, currentSong) => {
     const idx = this.music.findIndex((a) => a.title === currentSong);
     let nextSong = this.music[idx + 1];
     if (idx === this.music.length - 1) {
       nextSong = this.music[0];
     }
-
     this.setState({
       currentlyPlaying: nextSong.title,
       currentIdx: nextSong.id,
-      listeners: nextSong.listeners,
+      listeners: nextSong.count,
       likes: nextSong.likes,
       uploadedOn: nextSong.uploadedOn,
+      isLiked: nextSong.likedByMe,
+    });
+  };
+
+  playLastSong = (e, currentSong) => {
+    const idx = this.music.findIndex((a) => a.title === currentSong);
+    let lastSong = this.music[idx - 1];
+    if (idx === 0) {
+      lastSong = this.music[this.music.length - 1];
+    }
+    this.setState({
+      currentlyPlaying: lastSong.title,
+      currentIdx: lastSong.id,
+      listeners: lastSong.count,
+      likes: lastSong.likes,
+      uploadedOn: lastSong.uploadedOn,
+      isLiked: lastSong.likedByMe,
     });
   };
 
@@ -145,10 +163,13 @@ class Music extends Component {
       likes,
       uploadedOn,
     } = this.state;
-   
+
     return (
-      <Router>
-        <Card title="Music Player" style={{ width: 300 }}>
+      <div>
+        <Card
+          title="Music Player"
+          style={{ width: 300 }}
+        >
           {minimize && (
             <StyledTopContainer>
               <List
@@ -209,8 +230,10 @@ class Music extends Component {
             ref={this.audio}
             pauseSong={this.pauseSong}
             playNext={this.playNext}
+            playLastSong={this.playLastSong}
             updateProgressPercentage={this.updateProgressPercentage}
             share={this.shareUrl}
+            minimize={minimize}
           />
           {!minimize && (
             <Details
@@ -221,7 +244,7 @@ class Music extends Component {
             />
           )}
         </Card>
-      </Router>
+      </div>
     );
   }
 }

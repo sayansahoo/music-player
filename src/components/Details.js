@@ -11,9 +11,20 @@ const Details = (props) => {
   const { listeners, likes, uploadedOn } = props;
   return (
     <StyledMainContainer>
-      <div style={{marginBottom: '70px'}}>{likes} likes</div>
-      <div>{listeners} listeners</div> <br />
-      <div>uploaded on {uploadedOn} </div>
+      <div style={{ marginBottom: "70px", marginTop: "10px" }}>
+        {likes} likes
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div>{listeners} listeners</div> <br />
+        <div>uploaded on {uploadedOn} </div>
+      </div>
     </StyledMainContainer>
   );
 };

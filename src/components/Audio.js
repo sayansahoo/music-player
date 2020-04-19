@@ -7,6 +7,9 @@ import {
   faPlay,
   faShare,
   faPause,
+  faStepBackward,
+  faStepForward,
+  faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import styled from "styled-components";
@@ -76,7 +79,7 @@ class Audio extends Component {
     if (JSON.stringify(prevProps) !== JSON.stringify(this.props)) {
       if (this.state.progressPercent === 100 && prevProps.isPlaying === true) {
         this.props.playSong();
-        this.props.playNext(this.props.currentlyPlaying);
+        this.props.playNext(null, this.props.currentlyPlaying);
       }
     }
   }
@@ -90,10 +93,19 @@ class Audio extends Component {
       isLiked,
       showComponent,
       playNext,
+      playLastSong,
       share,
+      minimize,
     } = this.props;
     return (
-      <StyledAudioPlayer onClick={showComponent}>
+      <StyledAudioPlayer onClick={minimize ? showComponent : undefined}>
+        {!minimize && (
+          <FontAwesomeIcon
+            icon={faArrowLeft}
+            size="1x"
+            onClick={!minimize ? showComponent : undefined}
+          />
+        )}
         <Progress
           onClick={this.onClickProgress}
           showInfo={false}
@@ -101,7 +113,13 @@ class Audio extends Component {
           strokeColor="orange"
         />
         <marquee>
-          <div style={{ display: "flex", justifyContent: "center", cursor: 'pointer'}}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              cursor: "pointer",
+            }}
+          >
             {currentlyPlaying}
           </div>
         </marquee>
@@ -117,11 +135,21 @@ class Audio extends Component {
           onDuration={this.onDuration}
         />
         <StyledButtons>
-          <span onClick={(e)=>likeSong(e,currentlyPlaying)}>
+          <span onClick={(e) => likeSong(e, currentlyPlaying)}>
             <FontAwesomeIcon
               size={"lg"}
               icon={isLiked ? solidHeart : faHeart}
               color="red"
+            />
+          </span>
+          <span>
+            <FontAwesomeIcon
+              size={"lg"}
+              icon={faStepBackward}
+              onClick={(e) => {
+                e.stopPropagation();
+                playLastSong(e, currentlyPlaying);
+              }}
             />
           </span>
           <span onClick={playSong}>
@@ -130,6 +158,16 @@ class Audio extends Component {
             ) : (
               <FontAwesomeIcon size={"lg"} icon={faPlay} />
             )}
+          </span>
+          <span>
+            <FontAwesomeIcon
+              size={"lg"}
+              icon={faStepForward}
+              onClick={(e) => {
+                e.stopPropagation();
+                playNext(e, currentlyPlaying);
+              }}
+            />
           </span>
           <span>
             <Popover content={ShareComponent} placement="left" trigger="click">
