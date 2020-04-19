@@ -3,5 +3,10 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ## Available Scripts
 
 In the project directory, you can run:
-1) npm i
-2)npm run dev
+
+npm i -> npm run dev
+
+### `Demo Link`
+
+https://music-player-sayan.herokuapp.com/
+
